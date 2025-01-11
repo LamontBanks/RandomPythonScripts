@@ -1,6 +1,6 @@
 # RandomPythonScripts
 
-### Markov(?) Name Generator
+### Markov Name Generator
 Generate names based on prexisting names, kind of useful useful for table/videogame character names.
 
 ### Usage
