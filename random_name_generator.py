@@ -151,13 +151,13 @@ def letter_position_frequency_names(words, num_names = 50):
         
 def remove_bad_names(names):
     # No double-letters
-    names = list(filter(lambda name: re.search(r"(\w)\1{1,}", name) == None, names))
+    names = list(filter(lambda name: re.search(r"(\w)\1", name.lower()) == None, names))
 
     # Need vowels
-    names = list(filter(lambda name: re.search(r"[aeiou]", name), names))
+    names = list(filter(lambda name: re.search(r"[aeiou]", name.lower()), names))
 
     # At least 7 letters
-    names = list(filter(lambda name: re.search(r"\w{7,}", name), names))
+    names = list(filter(lambda name: re.search(r"\w{7,}", name.lower()), names))
 
     return names
 
