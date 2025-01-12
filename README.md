@@ -1,13 +1,13 @@
 # RandomPythonScripts
 
-### Markov Name Generator
+### Random Name Generator
 Generate names based on prexisting names, kind of useful useful for table/videogame character names.
 
 ### Usage
-    $ python3 markov_name_generator.py <txt of names>
+    $ python3 random_name_generator.py <txt of names>
 
     Ex:
-    $ python3 markov_name_generator.py names.txt
+    $ python3 random_name_generator.py names.txt
     
     [
         'Roda',

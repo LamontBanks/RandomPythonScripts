@@ -9,6 +9,8 @@ for line in fileinput.input(encoding="utf-8"):
     line = line.lstrip().rstrip().lower()
     words.append(line)
 
+print(words)
+
 # Create dictionary of chars per index, and word length counts
 char_count_per_index_dict = {}
 words_length_dict = {}
@@ -72,5 +74,6 @@ for i in range(1, num_words + 1):
         new_letter = random.sample(index_char_sampling_lists[i][0], counts=index_char_sampling_lists[i][1], k=1)[0]
         new_word += new_letter
     names.append(new_word.capitalize())
+
 
 pprint.pprint(names)
