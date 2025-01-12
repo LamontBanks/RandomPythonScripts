@@ -9,71 +9,144 @@ for line in fileinput.input(encoding="utf-8"):
     line = line.lstrip().rstrip().lower()
     words.append(line)
 
-print(words)
+def next_letter_frequency_names(words):
+    # Next-letter frequency
+    # Ex:
+    # words = ["hello", "there"]
+    # { 
+    #     'h': {
+    #         'e': 2
+    #     },
+    #     'e': {
+    #         'l': 1,
+    #         'r': 1,
+    #         # etc...
+    #     }
+    # }
+    next_letter_frequency = {}
+    first_letter_frequency = {}
+    word_length_frequency = {}
 
-# Create dictionary of chars per index, and word length counts
-char_count_per_index_dict = {}
-words_length_dict = {}
-
-for word in words:
-    for i in range(0, len(word)):
-        # Count word lengths
-        length = len(word)
-        if length not in words_length_dict:
-            words_length_dict[length] = 1
+    for word in words:
+        # Count next-letter frequency for word length == 1
+        if len(word) not in word_length_frequency:
+            word_length_frequency[len(word)] = 1
         else:
-            words_length_dict[length] += 1
+            word_length_frequency[len(word)] += 1
 
-        # Add index if needed
-        if i not in char_count_per_index_dict:
-            char_count_per_index_dict[i] = {}
-
-        # Count chars for the index
-        char = word[i]
-        if char not in char_count_per_index_dict[i]:
-            char_count_per_index_dict[i][char] = 1
+        # Save first letter frequency
+        if word[0] not in first_letter_frequency:
+            first_letter_frequency[word[0]] = 1
         else:
-            char_count_per_index_dict[i][char] += 1
+            first_letter_frequency[word[0]] += 1
 
-# Use random.sample to choose word length and letters
-# Create dual lists of chars and frequencies to use with random.sample: https://docs.python.org/3/library/random.html#random.sample
-# 
-# Ex:
-#   {
-#     0: 
-#         [
-#             (['e', 'a', 'i', 'n'], [2, 5, 34, 1])
-#         ],
-#     1:
-#         [
-#             (['z', 'y'], [4, 5])
-#         ]
-#   }
-# At index 0 of a word, 'e' appears 2 times, 'a' appears 5 times, 'i' appears 34 times, etc.
-# At index 1 of a word, 'z' appears 4 times, 'y' appears 5 times, etc.
-index_char_sampling_lists = {}
-for i in char_count_per_index_dict.keys():
-    chars = list(char_count_per_index_dict[i].keys())
-    char_freq = list(char_count_per_index_dict[i].values())
+        # Count next-letter frequency for single char
+        if len(word) == 1:
+            if word not in next_letter_frequency:
+                next_letter_frequency[word] = {}
+        else:
+            for i in range(0, len(word) - 2):
+                # Count next-letter frequency for word length > 1
+                first_letter = word[i]
+                second_letter = word[i + 1]
 
-    if i not in index_char_sampling_lists:
-        index_char_sampling_lists[i] = None
-    index_char_sampling_lists[i] = (chars, char_freq)
+                if first_letter not in next_letter_frequency:
+                    next_letter_frequency[first_letter] = {}
+                if second_letter not in next_letter_frequency[first_letter]:
+                    next_letter_frequency[first_letter][second_letter] = 1
+                else:
+                    next_letter_frequency[first_letter][second_letter] += 1
 
-# Do the same for word length
-word_length_sampling_list = (list(words_length_dict.keys()), list(words_length_dict.values()))
+    # Create sampling lists
+    word_length_sampling_lists = (
+        list(word_length_frequency.keys()),
+        list(word_length_frequency.values())
+    )
 
-#### Generate a word #####
-num_words = 50
-names = []
-for i in range(1, num_words + 1):
-    new_word_length = random.sample(word_length_sampling_list[0], counts=word_length_sampling_list[1], k=1)[0]
+    first_letter_sampling_lists = (
+        list(first_letter_frequency.keys()),
+        list(first_letter_frequency.values())
+    )
 
-    new_word = ""
-    for i in range(0, new_word_length):
-        new_letter = random.sample(index_char_sampling_lists[i][0], counts=index_char_sampling_lists[i][1], k=1)[0]
-        new_word += new_letter
-    names.append(new_word.capitalize())
+    next_letter_sampling_lists = {}
+    for first_letter in next_letter_frequency:
+        next_letter_sampling_lists[first_letter] = (list(next_letter_frequency[first_letter].keys()),
+                                                    list(next_letter_frequency[first_letter].values()))
 
+    #### Generate a word #####
+    num_words = 50
+    names = []
+    for i in range(1, num_words + 1):
+        new_word = ""
 
-pprint.pprint(names)
+        # Pick the needed values based on the recorded frequencies
+        new_word_length = random.sample(word_length_sampling_lists[0], counts=word_length_sampling_lists[1], k=1)[0]
+        first_letter = random.sample(first_letter_sampling_lists[0], counts=first_letter_sampling_lists[1], k=1)[0]
+
+        # Get first letter
+        new_word += first_letter
+        curr_letter = first_letter
+
+        # Get remaining letters
+        for i in range(new_word_length - 1):
+            next_letter_sampling_lists[curr_letter]
+            next_letter = random.sample(next_letter_sampling_lists[curr_letter][0], counts=next_letter_sampling_lists[curr_letter][1], k=1)[0]
+
+            new_word += next_letter
+            curr_letter = next_letter
+        names.append(new_word.capitalize())
+    
+    return names
+
+def letter_position_frequency_names(words):
+    word_length_frequency = {}
+    letter_position_frequency = {}
+
+    for word in words:
+        # Count next-letter frequency for word length == 1
+        if len(word) not in word_length_frequency:
+            word_length_frequency[len(word)] = 1
+        else:
+            word_length_frequency[len(word)] += 1
+        
+        # Count letter frequency by position
+        for i in range(len(word)):
+            letter = word[i]
+            if i not in letter_position_frequency:
+                letter_position_frequency[i] = {}
+            if letter not in letter_position_frequency[i]:
+                letter_position_frequency[i][letter] = 1
+            else:
+                letter_position_frequency[i][letter] += 1
+
+    # Create sampling lists
+    word_length_sampling_lists = (
+        list(word_length_frequency.keys()),
+        list(word_length_frequency.values())
+    )
+
+    letter_position_sampling_lists = {}
+    for i in letter_position_frequency:
+        letter_position_sampling_lists[i] = (list(letter_position_frequency[i].keys()),
+                                                    list(letter_position_frequency[i].values()))
+        
+    #### Generate a word #####
+    num_words = 50
+    names = []
+    for i in range(1, num_words + 1):
+        new_word = ""
+
+        # Pick the needed values based on the recorded frequencies
+        new_word_length = random.sample(word_length_sampling_lists[0], counts=word_length_sampling_lists[1], k=1)[0]
+    
+        for i in range(new_word_length - 1):
+            letter_position_sampling_lists[i]
+            next_letter = random.sample(letter_position_sampling_lists[i][0], counts=letter_position_sampling_lists[i][1], k=1)[0]
+
+            new_word += next_letter
+        names.append(new_word.capitalize())
+    
+    return names
+        
+pprint.pprint(next_letter_frequency_names(words))
+pprint.pprint(letter_position_frequency_names(words))
