@@ -4,8 +4,7 @@ import pprint
 import re
 
 # Read words
-words = []
-
+words = ['Ceithal']
 for line in fileinput.input(encoding="utf-8"):
     line = line.lstrip().rstrip().lower()
     words.append(line)
@@ -75,7 +74,7 @@ def next_letter_frequency_names(words, num_names = 50):
                                                     list(next_letter_frequency[first_letter].values()))
 
     #### Generate a word #####
-    names = []
+    names = set()
     for i in range(1, num_names + 1):
         new_word = ""
 
@@ -95,9 +94,10 @@ def next_letter_frequency_names(words, num_names = 50):
 
             new_word += next_letter
             curr_letter = next_letter
-        names.append(new_word.capitalize())
+
+        names.add(new_word.capitalize())
     
-    return names
+    return list(names)
 
 """Generate names based on the frequency of letters appearing in each position"""
 def letter_position_frequency_names(words, num_names = 50):
@@ -133,7 +133,7 @@ def letter_position_frequency_names(words, num_names = 50):
                                                     list(letter_position_frequency[i].values()))
         
     #### Generate a word #####
-    names = []
+    names = set()
     for i in range(1, num_names + 1):
         new_word = ""
 
@@ -145,9 +145,9 @@ def letter_position_frequency_names(words, num_names = 50):
             next_letter = random.sample(letter_position_sampling_lists[i][0], counts=letter_position_sampling_lists[i][1], k=1)[0]
 
             new_word += next_letter
-        names.append(new_word.capitalize())
+        names.add(new_word.capitalize())
 
-    return names
+    return list(names)
         
 def remove_bad_names(names):
     # No double-letters
@@ -163,4 +163,7 @@ def remove_bad_names(names):
 
 
 names = sorted(remove_bad_names(next_letter_frequency_names(words)))
-pprint.pprint(names)
+
+# Print without the quote marks for easy copy-paste
+for name in names:
+    print(name)
