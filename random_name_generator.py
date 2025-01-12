@@ -1,6 +1,7 @@
 import fileinput
 import random
 import pprint
+import re
 
 # Read words
 words = []
@@ -9,7 +10,7 @@ for line in fileinput.input(encoding="utf-8"):
     line = line.lstrip().rstrip().lower()
     words.append(line)
 
-def next_letter_frequency_names(words):
+def next_letter_frequency_names(words, num_names = 50):
     # Next-letter frequency
     # Ex:
     # words = ["hello", "there"]
@@ -74,9 +75,8 @@ def next_letter_frequency_names(words):
                                                     list(next_letter_frequency[first_letter].values()))
 
     #### Generate a word #####
-    num_words = 50
     names = []
-    for i in range(1, num_words + 1):
+    for i in range(1, num_names + 1):
         new_word = ""
 
         # Pick the needed values based on the recorded frequencies
@@ -89,7 +89,8 @@ def next_letter_frequency_names(words):
 
         # Get remaining letters
         for i in range(new_word_length - 1):
-            next_letter_sampling_lists[curr_letter]
+            if curr_letter not in next_letter_sampling_lists:
+                break
             next_letter = random.sample(next_letter_sampling_lists[curr_letter][0], counts=next_letter_sampling_lists[curr_letter][1], k=1)[0]
 
             new_word += next_letter
@@ -98,7 +99,8 @@ def next_letter_frequency_names(words):
     
     return names
 
-def letter_position_frequency_names(words):
+"""Generate names based on the frequency of letters appearing in each position"""
+def letter_position_frequency_names(words, num_names = 50):
     word_length_frequency = {}
     letter_position_frequency = {}
 
@@ -131,9 +133,8 @@ def letter_position_frequency_names(words):
                                                     list(letter_position_frequency[i].values()))
         
     #### Generate a word #####
-    num_words = 50
     names = []
-    for i in range(1, num_words + 1):
+    for i in range(1, num_names + 1):
         new_word = ""
 
         # Pick the needed values based on the recorded frequencies
@@ -145,8 +146,21 @@ def letter_position_frequency_names(words):
 
             new_word += next_letter
         names.append(new_word.capitalize())
-    
+
     return names
         
-pprint.pprint(next_letter_frequency_names(words))
-pprint.pprint(letter_position_frequency_names(words))
+def remove_bad_names(names):
+    # No double-letters
+    names = list(filter(lambda name: re.search(r"(\w)\1{1,}", name) == None, names))
+
+    # Need vowels
+    names = list(filter(lambda name: re.search(r"[aeiou]", name), names))
+
+    # At least 7 letters
+    names = list(filter(lambda name: re.search(r"\w{7,}", name), names))
+
+    return names
+
+
+names = sorted(remove_bad_names(next_letter_frequency_names(words)))
+pprint.pprint(names)
